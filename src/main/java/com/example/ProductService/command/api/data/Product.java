@@ -1,5 +1,8 @@
-package com.example.ProductService.command.api.events;
+package com.example.ProductService.command.api.data;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,10 +11,14 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCreatedEvent {
+@Table(name = "_Product")
+public class Product {
+
+    @Id
     private String productId;
     private String name;
     private BigDecimal price;
