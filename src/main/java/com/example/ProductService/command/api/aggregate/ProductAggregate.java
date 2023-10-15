@@ -1,7 +1,9 @@
 package com.example.ProductService.command.api.aggregate;
 
 import com.example.ProductService.command.api.commands.CreateProductCommand;
+import com.example.ProductService.command.api.commands.UpdateProductCommand;
 import com.example.ProductService.command.api.events.ProductCreatedEvent;
+import com.example.ProductService.command.api.events.ProductUpdatedEvent;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -16,7 +18,7 @@ import java.math.BigDecimal;
 public class ProductAggregate {
 
     @AggregateIdentifier
-    private String productId;
+    private String aggregateId;
     private String name;
     private BigDecimal price;
     private Integer quantity;
@@ -26,7 +28,7 @@ public class ProductAggregate {
         ProductCreatedEvent productCreatedEvent
                 = ProductCreatedEvent
                 .builder()
-                .productId(createProductCommand.getProductId())
+                .aggregateId(createProductCommand.getAggregateId())
                 .name(createProductCommand.getName())
                 .price(createProductCommand.getPrice())
                 .quantity(createProductCommand.getQuantity())
@@ -45,11 +47,30 @@ public class ProductAggregate {
 
     @EventSourcingHandler
     public void on(ProductCreatedEvent productCreatedEvent){
-        this.productId = productCreatedEvent.getProductId();
+        this.aggregateId = productCreatedEvent.getAggregateId();
         this.quantity = productCreatedEvent.getQuantity();
         this.price = productCreatedEvent.getPrice();
         this.name = productCreatedEvent.getName();
     }
 
+
+
+    @CommandHandler
+    public ProductAggregate(UpdateProductCommand updateProductCommand) {
+        ProductUpdatedEvent productUpdatedEvent = new ProductUpdatedEvent();
+        BeanUtils.copyProperties(updateProductCommand, productUpdatedEvent);
+
+        //Now publish a particular event
+        AggregateLifecycle.apply(productUpdatedEvent);
+    }
+
+
+    @EventSourcingHandler
+    public void on(ProductUpdatedEvent productUpdatedEvent) {
+        this.aggregateId = productUpdatedEvent.getAggregateId();
+        this.quantity = productUpdatedEvent.getQuantity();
+        this.price = productUpdatedEvent.getPrice();
+        this.name = productUpdatedEvent.getName();
+    }
 
 }

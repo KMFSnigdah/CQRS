@@ -11,8 +11,9 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCreatedEvent {
+public class ProductUpdatedEvent {
     private String aggregateId;
+    private long productId;
     private String name;
     private BigDecimal price;
     private Integer quantity;
